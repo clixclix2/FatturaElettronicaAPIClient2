@@ -1,6 +1,6 @@
 <?php
 // esempio di gestione della paginazione (per volumi alti, sopra ai 1000 risultati attesi per chiamata)
-require_once 'FatturaElettronicaApiClient2.class.php';
+require_once '../FatturaElettronicaApiClient2.class.php';
 $feac = new FatturaElettronicaApiClient2($username, $password);
 $res = $feac->ricevi();
 if ($res) {
