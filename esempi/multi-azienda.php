@@ -2,7 +2,7 @@
 
 // Esempi di gestione multi-azienda
 
-require_once 'FatturaElettronicaApiClient2.class.php';
+require_once '../FatturaElettronicaApiClient2.class.php';
 
 $username = '........'; //Username e password forniti dal servizio
 $password = '........';
