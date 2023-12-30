@@ -52,13 +52,14 @@ class FatturaElettronicaApiClient2
 
     /**
      * Invia un documento al SdI tramite Fattura Elettronica API, indicando i dati del documento
+     * Lista completa dei dati che è possibile specificare: https://fattura-elettronica-api.it/guida2.0/#approfondimenti_datifattura
      * Questo metodo può gestire le casistiche di fatturazine più comuni. Per casistiche più complesse, è necessario generare l'XML completo ed utilizzare il metodo invia()
      * Per utilizzare questo metodo, è necessario aver inserito i propri dati aziendali completi nel pannello di controllo fattura-elettronica-api.it, nella sezione "Dati per generazione automatica fatture", oppure tramite API /aziende
      * In caso di esito positivo, la fattura elettronica finale (quella effettivamente trasmessa al SDI) viene ritornata nel campo 'sdi_fattura'
      * @param array $datiDestinatario PartitaIVA (opz.), CodiceFiscale (opz.), PEC (opz.), CodiceSDI (opz.), Denominazione, Indirizzo, CAP, Comune, Provincia (opz.), Nazione (opz., codice a 2 lettere)
      * @param array $datiDocumento tipo=FATT,NDC,NDD (opz. - default 'FATT'), Data, Numero, Causale (opz.)
      * @param array $righeDocumento Ogni riga è un array coi campi: Descrizione, PrezzoUnitario, Quantita (opz.), AliquotaIVA (opz. - default 22)
-     * @param string $partitaIvaMittente In caso di account multi-azienda, specificare la partita iva del Cedente
+     * @param string $partitaIvaMittente In caso di scenario multi-azienda, specificare la partita iva del Cedente
      * @return null|array
      */
     function inviaConDati($datiDestinatario, $datiDocumento, $righeDocumento, $partitaIvaMittente = null)
@@ -78,8 +79,32 @@ class FatturaElettronicaApiClient2
 
 
     /**
+     * Ritorna gli eventuali nuovi documenti ricevuti o aggiornamenti sui documenti inviati
+     * Vedere guida online per i campi ritornati (https://fattura-elettronica-api.it/guida2.0/#ricezione)
+     * Nota: in alternativa alla ricezione dei documenti e degli aggiornamenti di invio con ricevi(), è possibile configurare la ricezione automatica tramite webhook (vedere guida online)
+     * Una volta ricevuto un documento o un aggiornamento, questo non viene più trasmesso alle successive invocazioni del metodo ricevi(), salvo andando sul pannello di controllo e reimpostando la spunta "Da leggere"
+     * Paginazione: verificare hasMoreResults() e getNextResults()
+     * @param array $opzioni array associativo - vedere guida
+     * @return null|array array di array coi campi: partita_iva, ricezione, sdi_identificativo, sdi_messaggio, sdi_nome_file, sdi_fattura, sdi_fattura_xml, sdi_data_aggiornamento, sdi_stato, dati_mittente, dati_documento, righe_documento
+     */
+    function ricevi($opzioni) {
+        $callOptions = [
+            'unread' => true,
+        ];
+
+        $callOptions = array_merge($callOptions, $opzioni);
+
+        $ret = $this->call('get', '/fatture', $callOptions);
+        if ($ret) {
+            return json_decode($ret, true);
+        }
+        return NULL;
+    }
+
+    /**
      * Ritorna gli eventuali nuovi documenti ricevuti
      * Vedere guida online per i campi ritornati (https://fattura-elettronica-api.it/guida2.0/#ricezione)
+     * Nota: in alternativa alla ricezione dei documenti con riceviDocumenti(), è possibile configurare la ricezione automatica tramite webhook (vedere guida online)
      * Una volta ricevuto un documento, questo non viene più trasmesso alle successive invocazioni del metodo riceviDocumenti(), salvo andando sul pannello di controllo e reimpostando la spunta "Da leggere"
      * Paginazione: verificare hasMoreResults() e getNextResults()
      * @param array $opzioni array associativo - vedere guida
@@ -104,6 +129,7 @@ class FatturaElettronicaApiClient2
     /**
      * Ritorna gli eventuali nuovi aggiornamenti sui documenti inviati
      * Vedere guida online per i campi ritornati (https://fattura-elettronica-api.it/guida2.0/#ricezione)
+     * Nota: in alternativa alla ricezione dei documenti con riceviDocumenti(), è possibile configurare la ricezione automatica tramite webhook (vedere guida online)
      * Una volta ricevuto un aggiornamento, questo non viene più trasmesso alle successive invocazioni del metodo riceviAggiornamenti(), salvo andando sul pannello di controllo e reimpostando la spunta "Da leggere"
      * Paginazione: verificare hasMoreResults() e getNextResults()
      * @param array $opzioni array associativo - vedere guida
