@@ -37,6 +37,7 @@ class FatturaElettronicaApiClient2
 
     /**
      * Invia un documento (fattura, nota di credito, nota di debito, etc.) al SdI, trmamite Fattura Elettronica API
+     * L'XML deve corrispondere al formato ministeriale: https://www.agenziaentrate.gov.it/portale/web/guest/specifiche-tecniche-versione-1.7.1
      * Il sistema (FatturaElettronicaAPI) aggiungerà o modificherà la sezione relativa ai dati di trasmissione (sezione FatturaElettronicaHeader/DatiTrasmissione dell'XML)
      * @param string $xml Documento XML, charset UTF-8
      * @return null|array (id, sdi_identificativo, sdi_nome_file, sdi_fattura, sdi_stato, sdi_messaggio)
