@@ -87,7 +87,7 @@ class FatturaElettronicaApiClient2
      * @param array $opzioni array associativo - vedere guida
      * @return null|array array di array coi campi: partita_iva, ricezione, sdi_identificativo, sdi_messaggio, sdi_nome_file, sdi_fattura, sdi_fattura_xml, sdi_data_aggiornamento, sdi_stato, dati_mittente, dati_documento, righe_documento
      */
-    function ricevi($opzioni) {
+    function ricevi($opzioni = []) {
         $callOptions = [
             'unread' => true,
         ];
